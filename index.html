@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="indexc.css">
+  <title>Calculator</title>
+</head>
+<body>
+  <header>
+    <!-- Header -->
+    <div class="contener-a">
+      <!-- History Section (between header and main) -->
+  <div class="history-section" id="history-section">
+    <div id="history"></div>
+  </div>
+      <div class="ju-a">
+        <div class="a-a">
+          <span id="moon-icon"><i class="fa-regular fa-moon"></i></span>
+          <span id="sun-icon" style="display: none;"><i class="fa-solid fa-sun"></i></span>
+          <span id="history-btn" style="cursor: pointer;">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+ <!-- Main -->
+  <main>
+    <div class="contener-b">
+      <div class="display" id="display"></div>
+    </div>
+    <div class="parent-c">
+    <div class="contener-c">
+      <div class="buttons-a">
+        <div class="a">AC</div>
+        <div id="delete-btn" class="b"><i class="fa-solid fa-delete-left"></i></div>
+        <div class="c">%</div>
+        <div class="d">÷</div>
+        <div>7</div>
+        <div>8</div>
+        <div>9</div>
+        <div class="e">*</div>
+        <div>4</div>
+        <div>5</div>
+        <div>6</div>
+        <div class="f">-</div>
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div class="g">+</div>
+        <div>0</div>
+        <div>.</div>
+        <div class="h">=</div>
+      </div>
+    </div>
+    </div>
+  </main>
+
+  <script>
+    const display = document.getElementById("display");
+    const buttons = document.querySelectorAll(".buttons-a div");
+    const sunIcon = document.getElementById("sun-icon");
+    const moonIcon = document.getElementById("moon-icon");
+    const historyBtn = document.getElementById("history-btn");
+    const historySection = document.getElementById("history-section");
+    const historyContainer = document.getElementById("history");
+
+    let currentInput = "";
+    let history = [];
+
+    // Default light mode
+    document.body.classList.add("light-mode");
+    sunIcon.style.display = "none";
+
+    // Toggle to dark mode
+    moonIcon.addEventListener("click", () => {
+      document.body.classList.remove("light-mode");
+      document.body.classList.add("dark-mode");
+      moonIcon.style.display = "none";
+      sunIcon.style.display = "inline";
+    });
+
+    // Toggle to light mode
+    sunIcon.addEventListener("click", () => {
+      document.body.classList.remove("dark-mode");
+      document.body.classList.add("light-mode");
+      sunIcon.style.display = "none";
+      moonIcon.style.display = "inline";
+    });
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const value = button.textContent.trim();
+
+        if (value === "AC") {
+          currentInput = "";
+          display.textContent = "";
+        } else if (value === "=") {
+          try {
+            currentInput = eval(currentInput.replace("÷", "/").replace("×", "*"));
+            display.textContent = currentInput;
+            // Add result to history
+            history.push(currentInput);
+            updateHistory();
+          } catch {
+            display.textContent = "Error";
+            currentInput = "";
+          }
+        } else if (value === "+/-") {
+          currentInput = currentInput ? (-parseFloat(currentInput)).toString() : "";
+          display.textContent = currentInput;
+        } else if (value === "%") {
+          currentInput = (parseFloat(currentInput) / 100).toString();
+          display.textContent = currentInput;
+        } else if (value === "←") {
+          currentInput = currentInput.slice(0, -1); // Remove last character
+          display.textContent = currentInput;
+        } else {
+          currentInput += value;
+          display.textContent = currentInput;
+        }
+      });
+    });
+
+    // Delete button functionality
+    const deleteButton = document.getElementById("delete-btn");
+    deleteButton.addEventListener("click", () => {
+      currentInput = currentInput.slice(0, -1); // Remove last character
+      display.textContent = currentInput;
+    });
+
+    // History button functionality
+    historyBtn.addEventListener("click", () => {
+      // Toggle visibility of history section
+      
+      historySection.style.display = historySection.style.display === "none" ? "block" : "none";
+      // Scroll to bottom of history section when shown
+      if (historySection.style.display === "block") {
+        historySection.scrollTop = historySection.scrollHeight;
+      }
+    });
+
+    // Function to update history display
+    function updateHistory() {
+      historyContainer.innerHTML = "";
+      history.forEach((item, index) => {
+        const historyItem = document.createElement("div");
+        historyItem.textContent = `${index + 1}. ${item}`;
+        historyContainer.appendChild(historyItem);
+      });
+    }
+  </script>
+</body>
+</html>
+
